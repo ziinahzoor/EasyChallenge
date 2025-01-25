@@ -15,7 +15,10 @@ public class FizzBuzzGeneratorTests
     public void ItShouldGenerateValuesWithIntegerInputs(int start, int end, string[] expected, TokenDictionary? tokens = null)
     {
         // Arrange & Act
-        string[] result = FizzBuzzGenerator.Generate(start, end, tokens).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create(tokens)
+            .Generate(start, end)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -30,7 +33,10 @@ public class FizzBuzzGeneratorTests
         string[] expected = ["1", "Two", "3", "TwoFour", "5", "Two", "7", "TwoFour"];
 
         // Act
-        string[] result = FizzBuzzGenerator.Generate(start, end, _customTokens).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create(_customTokens)
+            .Generate(start, end)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -45,7 +51,10 @@ public class FizzBuzzGeneratorTests
     public void ItShouldGenerateValuesWithStringRangeInputs(string range, string[] expected, TokenDictionary? tokens = null)
     {
         // Arrange & Act
-        string[] result = FizzBuzzGenerator.Generate(range, tokens).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create(tokens)
+            .Generate(range)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -59,7 +68,10 @@ public class FizzBuzzGeneratorTests
         string[] expected = ["1", "Two", "3", "TwoFour", "5", "Two", "7", "TwoFour"];
 
         // Act
-        string[] result = FizzBuzzGenerator.Generate(range, _customTokens).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create(_customTokens)
+            .Generate(range)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -73,7 +85,10 @@ public class FizzBuzzGeneratorTests
         string[] expected = ["2", "4", "Buzz", "8", "Buzz", "13", "FizzBuzz"];
 
         // Act
-        string[] result = FizzBuzzGenerator.Generate(numbers).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create()
+            .Generate(numbers)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -87,7 +102,10 @@ public class FizzBuzzGeneratorTests
         string[] expected = ["Two", "TwoFour", "5", "TwoFour", "Two", "13"];
 
         // Act
-        string[] result = FizzBuzzGenerator.Generate(numbers, _customTokens).ToArray();
+        string[] result = DefaultFizzBuzzGenerator
+            .Create(_customTokens)
+            .Generate(numbers)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -100,6 +118,6 @@ public class FizzBuzzGeneratorTests
         string range = "-15";
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => FizzBuzzGenerator.Generate(range));
+        Assert.Throws<ArgumentException>(() => DefaultFizzBuzzGenerator.Create().Generate(range));
     }
 }

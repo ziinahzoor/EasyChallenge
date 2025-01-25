@@ -10,7 +10,8 @@ TokenDictionary tokens = new()
 
 var values = "(-20)-127";
 
-IEnumerable<string> fizzBuzzOutputs = FizzBuzzGenerator.Generate(values, tokens);
+IFizzBuzzGenerator generator = DefaultFizzBuzzGenerator.Create(tokens);
+IEnumerable<string> fizzBuzzOutputs =  generator.Generate(values);
 
 string resultOutput = string.Join(' ', fizzBuzzOutputs);
 

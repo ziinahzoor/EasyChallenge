@@ -2,7 +2,8 @@
 
 var values = "1-100";
 
-IEnumerable<string> fizzBuzzOutputs = FizzBuzzGenerator.Generate(values);
+IFizzBuzzGenerator generator = DefaultFizzBuzzGenerator.Create();
+IEnumerable<string> fizzBuzzOutputs = generator.Generate(values);
 
 string resultOutput = string.Join(' ', fizzBuzzOutputs);
 

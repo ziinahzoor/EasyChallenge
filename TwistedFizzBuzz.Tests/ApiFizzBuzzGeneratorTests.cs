@@ -35,10 +35,12 @@ public class ApiFizzBuzzGeneratorTests
         int end = 21;
         string[] expected = ["1", "2", "Three", "4", "5", "Three", "Seven", "8", "Three", "10", "11", "Three", "13", "Seven", "Three", "16", "17", "Three", "19", "20", "SevenThree"];
         HttpClient httpClient = new(_httpHandlerMock.Object);
-        ApiFizzBuzzGenerator fizzBuzzGenerator = new(httpClient);
 
         // Act
-        string[] result = (await fizzBuzzGenerator.Generate(start, end)).ToArray();
+        ApiFizzBuzzGenerator fizzBuzzGenerator = await ApiFizzBuzzGenerator.CreateAsync(httpClient);
+        string[] result = fizzBuzzGenerator
+            .Generate(start, end)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -51,10 +53,12 @@ public class ApiFizzBuzzGeneratorTests
         string range = "1-21";
         string[] expected = ["1", "2", "Three", "4", "5", "Three", "Seven", "8", "Three", "10", "11" ,"Three", "13", "Seven", "Three", "16", "17", "Three", "19", "20", "SevenThree"];
         HttpClient httpClient = new(_httpHandlerMock.Object);
-        ApiFizzBuzzGenerator fizzBuzzGenerator = new(httpClient);
 
         // Act
-        string[] result = (await fizzBuzzGenerator.Generate(range)).ToArray();
+        ApiFizzBuzzGenerator fizzBuzzGenerator = await ApiFizzBuzzGenerator.CreateAsync(httpClient);
+        string[] result = fizzBuzzGenerator
+            .Generate(range)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
@@ -67,17 +71,19 @@ public class ApiFizzBuzzGeneratorTests
         int[] numbers = [1, 3, 7, 14, 15, 19, 21];
         string[] expected = ["1", "Three", "Seven", "Seven", "Three", "19", "SevenThree"];
         HttpClient httpClient = new(_httpHandlerMock.Object);
-        ApiFizzBuzzGenerator fizzBuzzGenerator = new(httpClient);
 
         // Act
-        string[] result = (await fizzBuzzGenerator.Generate(numbers)).ToArray();
+        ApiFizzBuzzGenerator fizzBuzzGenerator = await ApiFizzBuzzGenerator.CreateAsync(httpClient);
+        string[] result = fizzBuzzGenerator
+            .Generate(numbers)
+            .ToArray();
 
         // Assert
         Assert.Equal(expected, result);
     }
 
     [Fact]
-    public void ItShouldThrowApiInvalidResponse()
+    public async Task ItShouldThrowApiInvalidResponse()
     {
         // Arrange
         Mock<HttpMessageHandler> httpHandlerMock = new();
@@ -95,9 +101,8 @@ public class ApiFizzBuzzGeneratorTests
             });
 
         HttpClient httpClient = new(httpHandlerMock.Object);
-        ApiFizzBuzzGenerator fizzBuzzGenerator = new(httpClient);
 
         // Act & Assert
-        Assert.ThrowsAsync<Exception>(() => fizzBuzzGenerator.Generate("1-10"));
+        await Assert.ThrowsAsync<Exception>(() => ApiFizzBuzzGenerator.CreateAsync(httpClient));
     }
 }

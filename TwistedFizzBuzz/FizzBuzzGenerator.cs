@@ -1,19 +1,16 @@
-﻿using System.Text.RegularExpressions;
-
+﻿
 namespace TwistedFizzBuzz;
+
+using System.Text.RegularExpressions;
 using TokenDictionary = Dictionary<int, string>;
 
-public class FizzBuzzGenerator
+public abstract class FizzBuzzGenerator(TokenDictionary tokens) : IFizzBuzzGenerator
 {
-    private static readonly TokenDictionary defaultTokens = new()
-    {
-        { 3, "Fizz" },
-        { 5, "Buzz" }
-    };
+    private readonly TokenDictionary _tokens = tokens;
 
-    public static IEnumerable<string> Generate(string range, TokenDictionary? tokens = null)
+    public IEnumerable<string> Generate(string range)
     {
-        var match = Regex.Match(range, @"^(\(-?\d+\)|\d+)-(\(-?\d+\)|\d+)$");
+        Match match = Regex.Match(range, @"^(\(-?\d+\)|\d+)-(\(-?\d+\)|\d+)$");
 
         if (!match.Success)
         {
@@ -26,10 +23,10 @@ public class FizzBuzzGenerator
         int start = int.Parse(startText);
         int end = int.Parse(endText);
 
-        return Generate(start, end, tokens);
+        return Generate(start, end);
     }
 
-    public static IEnumerable<string> Generate(int start, int end, TokenDictionary? tokens = null)
+    public IEnumerable<string> Generate(int start, int end)
     {
         int numbersFromStart;
         IEnumerable<int> range;
@@ -45,18 +42,19 @@ public class FizzBuzzGenerator
             range = Enumerable.Range(start, numbersFromStart);
         }
 
-        return Generate(range, tokens);
+        return Generate(range);
     }
 
-    public static IEnumerable<string> Generate(IEnumerable<int> numbers, TokenDictionary? tokens = null)
+    public IEnumerable<string> Generate(IEnumerable<int> numbers)
     {
-        tokens ??= defaultTokens;
-        return numbers.Select(number => GetTokenValue(number, tokens));
+        return numbers.Select(number => GetTokenValue(number));
     }
 
-    private static string GetTokenValue(int number, TokenDictionary tokens)
+    private string GetTokenValue(int number)
     {
-        var valueTokens = tokens.Where(t => number % t.Key == 0).Select(t => t.Value);
+        IEnumerable<string> valueTokens = _tokens
+            .Where(t => number % t.Key == 0)
+            .Select(t => t.Value);
 
         return valueTokens.Any()
             ? string.Join(string.Empty, valueTokens)

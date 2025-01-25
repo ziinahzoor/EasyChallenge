@@ -4,39 +4,25 @@ namespace TwistedFizzBuzz;
 
 using TokenDictionary = Dictionary<int, string>;
 
-public class ApiFizzBuzzGenerator(HttpClient httpClient)
+public class ApiFizzBuzzGenerator : FizzBuzzGenerator
 {
     private static readonly string _apiUrl = "https://rich-red-cocoon-veil.cyclic.app/";
-    private readonly HttpClient _httpClient = httpClient;
 
-    public async Task<IEnumerable<string>> Generate(string range)
-    {
-        TokenDictionary? tokens = await GetTokens();
-        return FizzBuzzGenerator.Generate(range, tokens);
-    }
+    private ApiFizzBuzzGenerator(TokenDictionary tokens) : base(tokens) { }
 
-    public async Task<IEnumerable<string>> Generate(int start, int end)
+    public static async Task<ApiFizzBuzzGenerator> CreateAsync(HttpClient httpClient)
     {
-        TokenDictionary? tokens = await GetTokens();
-        return FizzBuzzGenerator.Generate(start, end, tokens);
-    }
-
-    public async Task<IEnumerable<string>> Generate(IEnumerable<int> numbers)
-    {
-        TokenDictionary? tokens = await GetTokens();
-        return FizzBuzzGenerator.Generate(numbers, tokens);
-    }
-
-    private async Task<TokenDictionary?> GetTokens()
-    {
-        HttpResponseMessage response = await _httpClient.GetAsync(_apiUrl);
+        HttpResponseMessage response = await httpClient.GetAsync(_apiUrl);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Failed to retrieve tokens from API. Status code: {response.StatusCode}");
+            throw new Exception($"Can't create generator: Failed to retrieve tokens from API. Status code: {response.StatusCode}");
         }
 
-        var jsonString = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<TokenDictionary>(jsonString);
+        string jsonString = await response.Content.ReadAsStringAsync();
+
+        TokenDictionary tokens = JsonSerializer.Deserialize<TokenDictionary>(jsonString)!;
+
+        return new(tokens);
     }
 }
